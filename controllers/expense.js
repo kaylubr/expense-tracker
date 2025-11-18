@@ -10,6 +10,16 @@ expenseRouter.get('/', async (_, response, next) => {
   }
 })
 
+expenseRouter.get('/:id', async (request, response, next) => {
+  try {
+    const id = request.params.id
+    const expense = await Expense.findById(id)
+    response.json(expense)
+  } catch (error) {
+    next(error)
+  }
+})
+
 expenseRouter.post('/', async (request, response, next) => {
   try {
     const payload = request.body
