@@ -1,9 +1,10 @@
 const expenseRouter = require('express').Router()
+const { userExtractor } = require('../utils/middleware')
 const Expense = require('../models/Expense')
 
-expenseRouter.get('/', async (_, response, next) => {
+expenseRouter.get('/', userExtractor, async (request, response, next) => {
   try {
-    const expenses = await Expense.find()
+    const expenses = await Expense.find() 
     response.json(expenses)
   } catch (error) {
     next(error)
