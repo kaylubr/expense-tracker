@@ -5,9 +5,10 @@ const expenseRouter = require('./controllers/expense.js')
 
 const app = express()
 
-mongoose.connect(MONGODB_URI).
-  catch(error => console.log(error))
+mongoose.connect(MONGODB_URI)
+  .catch(error => console.log(error))
 
+app.use(express.json())
 app.use('/api/expenses', expenseRouter)
 
 module.exports = app
