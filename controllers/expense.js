@@ -1,10 +1,11 @@
 const expenseRouter = require('express').Router()
 const { userExtractor } = require('../utils/middleware')
 const Expense = require('../models/Expense')
+const User = require('../models/User')
 
-expenseRouter.get('/', userExtractor, async (request, response, next) => {
+expenseRouter.get('/', async (request, response, next) => {
   try {
-    const expenses = await Expense.find() 
+    const expenses = await Expense.find().populate('user')
     response.json(expenses)
   } catch (error) {
     next(error)
@@ -14,14 +15,14 @@ expenseRouter.get('/', userExtractor, async (request, response, next) => {
 expenseRouter.get('/:id', async (request, response, next) => {
   try {
     const ID = request.params.id
-    const expense = await Expense.findById(ID)
+    const expense = await Expense.findById(ID).populate('user')
     response.json(expense)
   } catch (error) {
     next(error)
   }
 })
 
-expenseRouter.post('/', async (request, response, next) => {
+expenseRouter.post('/', userExtractor, async (request, response, next) => {
   try {
     const payload = request.body
 
@@ -29,9 +30,14 @@ expenseRouter.post('/', async (request, response, next) => {
       title: payload.title,
       description: payload.description ? payload.description : null,
       category: payload.category,
+      user: request.user
     })
 
+    const user = await User.findById(request.user._id)
+    user.expenses = user.expenses.concat(newExpense)
+
     await newExpense.save()
+    await user.save()
 
     response.status(201).json(newExpense)
   } catch (error) {

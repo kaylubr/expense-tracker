@@ -4,7 +4,7 @@ const User = require('../models/User')
 
 userRouter.get('/', async (_, response, next) => {
   try {
-    const users = await User.find()
+    const users = await User.find().populate('expenses')
     response.json(users)
   } catch (error) {
     next(error)
