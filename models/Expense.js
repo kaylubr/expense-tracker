@@ -18,6 +18,10 @@ const expenseSchema = mongoose.Schema({
   status: {
     type: String,
     default: 'Pending'
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   }
 }, { timestamps: true })
 
